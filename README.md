@@ -45,6 +45,8 @@ Follow the prompts:
 - Organized folder structure by platform and game
 - Skips already downloaded packs
 - Polite request delays to avoid server overload
+- Comprehensive logging with timestamps
+- Logs can be redirected to files for troubleshooting
 
 ## Output Structure
 
@@ -74,6 +76,28 @@ To download only Arcade DDR packs:
 
 The script will download all 37 arcade game packs (as of now) and organize them into individual folders with proper names.
 
+## Logging
+
+All output is logged with timestamps using Python's logging module. Logs show:
+- INFO level: General progress and status updates
+- WARNING level: Non-critical issues (invalid input, missing files)
+- ERROR level: Critical errors that prevent operations
+
+To save logs to a file, redirect output:
+```bash
+python ddr_downloader.py > download.log 2>&1
+```
+
+## Disclaimer
+
+**This project is not affiliated with, endorsed by, or connected to:**
+- Zenius-I-vanisher.com
+- Konami Digital Entertainment
+- Dance Dance Revolution (DDR)
+- Any official DDR or BEMANI products
+
+This is an independent, community-created tool for personal use. All simfiles are provided by the Zenius-I-vanisher community. Please respect the website's terms of service and the rights of content creators.
+
 ## Notes
 
 - Large downloads may take considerable time (some packs are several hundred MB)
@@ -81,4 +105,5 @@ The script will download all 37 arcade game packs (as of now) and organize them 
 - The script will skip packs that have already been downloaded
 - Respect the website's terms of service
 - A 2-second delay is added between downloads to be polite to the server
+- All operations are logged with timestamps for easy troubleshooting
 

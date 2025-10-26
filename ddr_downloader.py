@@ -270,7 +270,7 @@ class DDRSimfileDownloader:
                 if self.download_file(download_url, zip_path):
                     # Check if file was actually downloaded (not empty or error page)
                     if zip_path.stat().st_size < 1000:
-                        print(f"    [ERROR] Downloaded file too small, likely an error")
+                        logger.error("Downloaded file too small, likely an error")
                         failed += 1
                         try:
                             zip_path.unlink()
@@ -286,7 +286,7 @@ class DDRSimfileDownloader:
                             # Remove zip file after extraction
                             try:
                                 zip_path.unlink()
-                                print(f"    [OK] Cleaned up zip file")
+                                logger.debug("Cleaned up zip file")
                             except:
                                 pass
                         else:
@@ -297,7 +297,7 @@ class DDRSimfileDownloader:
                             except:
                                 pass
                     else:
-                        print(f"    [WARN] Downloaded file is not a zip, keeping as-is")
+                        logger.warning("Downloaded file is not a zip, keeping as-is")
                         # Move to pack directory
                         final_path = pack_dir / zip_filename.replace('temp_', '')
                         try:
@@ -316,14 +316,14 @@ class DDRSimfileDownloader:
                 # Be polite to the server
                 time.sleep(2)
         
-        print(f"\n{'='*60}")
-        print(f"Download complete!")
-        print(f"Successful: {successful}/{total_packs}")
-        print(f"Failed: {failed}/{total_packs}")
+        logger.info("="*60)
+        logger.info("Download complete!")
+        logger.info(f"Successful: {successful}/{total_packs}")
+        logger.info(f"Failed: {failed}/{total_packs}")
         if skipped > 0:
-            print(f"Skipped (already exist): {skipped}/{total_packs}")
-        print(f"Files saved to: {self.song_directory.absolute()}")
-        print(f"{'='*60}")
+            logger.info(f"Skipped (already exist): {skipped}/{total_packs}")
+        logger.info(f"Files saved to: {self.song_directory.absolute()}")
+        logger.info("="*60)
 
 def main():
     print("""
@@ -337,31 +337,31 @@ def main():
     # Fetch and parse the page
     html_content = downloader.fetch_page()
     if not html_content:
-        print("Failed to fetch page. Exiting.")
+        logger.error("Failed to fetch page. Exiting.")
         return
     
     downloader.parse_platforms(html_content)
     
     if not downloader.platforms:
-        print("No platforms found. The page structure may have changed.")
+        logger.error("No platforms found. The page structure may have changed.")
         return
     
     # Show what we found
-    print(f"\nFound {len(downloader.platforms)} platform(s)")
+    logger.info(f"Found {len(downloader.platforms)} platform(s)")
     for platform, packs in downloader.platforms.items():
-        print(f"  - {platform}: {len(packs)} packs")
+        logger.info(f"  - {platform}: {len(packs)} packs")
         # Show first few pack names as examples
         for i, pack in enumerate(packs[:3]):
-            print(f"      * {pack['name']}")
+            logger.info(f"      * {pack['name']}")
         if len(packs) > 3:
-            print(f"      ... and {len(packs) - 3} more")
+            logger.info(f"      ... and {len(packs) - 3} more")
     
     # Display platforms and get user selection
     platform_list = downloader.display_platforms()
     selected_platforms = downloader.get_user_selection(platform_list)
     
     if not selected_platforms:
-        print("No platforms selected. Exiting.")
+        logger.warning("No platforms selected. Exiting.")
         return
     
     print(f"\nYou selected: {', '.join(selected_platforms)}")
@@ -370,7 +370,7 @@ def main():
     if confirm == 'y':
         downloader.download_packs(selected_platforms)
     else:
-        print("Download cancelled.")
+        logger.info("Download cancelled.")
 
 if __name__ == "__main__":
     main()
